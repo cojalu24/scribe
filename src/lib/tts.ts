@@ -43,6 +43,8 @@ export class KokoroReader {
   // Bumped on every play/seek/pause; async work checks it so a stale
   // generation can't hijack playback after the user has jumped elsewhere.
   private epoch = 0
+  // In-flight model load, shared by concurrent loadModel() callers.
+  private loading: Promise<void> | null = null
 
   voice = 'af_heart'
   speed = 1.1
@@ -75,8 +77,20 @@ export class KokoroReader {
     return VOICES.map((v) => ({ id: v.id, label: v.label }))
   }
 
-  async loadModel(onProgress?: (pct: number) => void) {
-    if (this.worker) return
+  // Idempotent: concurrent callers all await the same in-flight load, so
+  // preloading at startup can't leave a later caller thinking it's ready.
+  async loadModel(onProgress?: (pct: number) => void): Promise<void> {
+    if (this.modelLoaded) return
+    if (this.loading) return this.loading
+    this.loading = this.doLoad(onProgress)
+    try {
+      await this.loading
+    } finally {
+      this.loading = null
+    }
+  }
+
+  private async doLoad(onProgress?: (pct: number) => void) {
     this.setState('loading-model')
     const worker = new Worker(new URL('./tts.worker.ts', import.meta.url), { type: 'module' })
     this.worker = worker

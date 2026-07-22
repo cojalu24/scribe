@@ -1,11 +1,8 @@
 import './polyfills'
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+// No StrictMode: its double-invoked effects would spin up two copies of the
+// TTS/Whisper workers and load the models twice.
+createRoot(document.getElementById('root')!).render(<App />)
