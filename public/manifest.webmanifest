@@ -1,0 +1,14 @@
+{
+  "name": "Scribe",
+  "short_name": "Scribe",
+  "description": "Read papers aloud and capture your thoughts; notes export to PDF or Claude.",
+  "start_url": "/tools/paper-notes/",
+  "scope": "/tools/paper-notes/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#002fa7",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

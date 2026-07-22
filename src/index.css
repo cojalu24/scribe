@@ -1,0 +1,45 @@
+/* Matches the aesthetic of colbylundak.com: minimal black-and-white,
+   hairline rules, muted grays, understated type. Light-only, like the site. */
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --muted: #6b6b6b;
+  --rule: #e6e6e6;
+  --backdrop: #f4f4f4;
+  --highlight: rgba(255, 213, 79, 0.4);
+  --recording: #c62828;
+  --klein: #002fa7;
+  --klein-soft: #eaefff;
+  font-family: 'Space Grotesk Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+  letter-spacing: -0.005em;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+::selection {
+  background: #111111;
+  color: #ffffff;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
