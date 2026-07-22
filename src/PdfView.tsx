@@ -9,14 +9,12 @@ export function PdfView({
   pages,
   chunks,
   activeIndex,
-  playing,
   onSeek,
 }: {
   pdf: PDFDocumentProxy
   pages: PageInfo[]
   chunks: TextChunk[]
   activeIndex: number
-  playing: boolean
   onSeek: (chunkIndex: number) => void
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -34,12 +32,11 @@ export function PdfView({
     return () => ro.disconnect()
   }, [])
 
-  // Keep the highlighted sentence in view while playing.
+  // Keep the highlighted sentence in view — while reading, and when the user
+  // steps through sentences with the arrow keys.
   useEffect(() => {
-    if (playing) {
-      activeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [activeIndex, playing])
+    activeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [activeIndex])
 
   const active = chunks[activeIndex]
 

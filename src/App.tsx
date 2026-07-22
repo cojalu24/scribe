@@ -75,6 +75,9 @@ export default function App() {
       setCurrentIndex(0)
       sessionStart.current = Date.now()
       readerRef.current?.setChunks(loaded.chunks)
+      // Warm up speech-to-text now, so the first capture doesn't have to wait
+      // on (or race) the model download.
+      transcriberRef.current?.loadModel().catch(() => {})
     } catch (e: any) {
       console.error('failed to load PDF', e)
       // Full details on-screen so failures are diagnosable (esp. Safari).
@@ -167,11 +170,21 @@ export default function App() {
       try {
         const audio = await rec.stop()
         setWhisperLoading(true)
-        const text = await transcriberRef.current!.transcribe(audio)
+        const transcriber = transcriberRef.current!
+        let text: string
+        try {
+          text = await transcriber.transcribe(audio)
+        } catch (e) {
+          // The first attempt can fail while the model is still warming up —
+          // retry once before giving up.
+          console.warn('transcription failed, retrying once', e)
+          text = await transcriber.transcribe(audio)
+        }
         setCaptures((prev) =>
           prev.map((c) => (c.id === id ? { ...c, transcript: text, status: 'done' } : c)),
         )
-      } catch {
+      } catch (e) {
+        console.error('transcription failed', e)
         setCaptures((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'error' } : c)))
       } finally {
         setWhisperLoading(false)
@@ -226,6 +239,10 @@ export default function App() {
     )
   }, [])
 
+  const deleteCapture = useCallback((id: string) => {
+    setCaptures((prev) => prev.filter((c) => c.id !== id))
+  }, [])
+
   // Add a typed thought (no voice) anchored to the current highlighted spot,
   // and open it for editing right away.
   const addWrittenThought = useCallback(() => {
@@ -267,6 +284,12 @@ export default function App() {
       } else if (e.key === 't' || e.key === 'T') {
         e.preventDefault()
         addWrittenThought()
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        readerRef.current?.seekTo(currentIndexRef.current + 1)
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        readerRef.current?.seekTo(currentIndexRef.current - 1)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -319,7 +342,6 @@ export default function App() {
             pages={paper.pages}
             chunks={paper.chunks}
             activeIndex={currentIndex}
-            playing={isPlaying}
             onSeek={(i) => readerRef.current?.seekTo(i)}
           />
         </main>
@@ -329,9 +351,8 @@ export default function App() {
             <h2 className="thoughts-heading">Thoughts</h2>
           </div>
           <ul>
-            {captures.map((c, i) => (
+            {captures.map((c) => (
               <li key={c.id} className="note">
-                <div className="note-num">{i + 1}</div>
                 <div className="note-body">
                   {c.anchorText && <div className="note-anchor">“{c.anchorText}”</div>}
                   <NoteText
@@ -340,6 +361,14 @@ export default function App() {
                     onSave={(text) => updateCapture(c.id, text)}
                   />
                 </div>
+                <button
+                  className="note-delete"
+                  onClick={() => deleteCapture(c.id)}
+                  aria-label="Delete thought"
+                  title="Delete"
+                >
+                  ×
+                </button>
               </li>
             ))}
           </ul>
