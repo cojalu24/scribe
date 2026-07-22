@@ -9,12 +9,14 @@ export function PdfView({
   pages,
   chunks,
   activeIndex,
+  playing,
   onSeek,
 }: {
   pdf: PDFDocumentProxy
   pages: PageInfo[]
   chunks: TextChunk[]
   activeIndex: number
+  playing: boolean
   onSeek: (chunkIndex: number) => void
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -54,6 +56,7 @@ export function PdfView({
               info={info}
               scale={scale}
               highlights={active?.page === pageNum ? active.rects : []}
+              playing={playing}
               activeRef={active?.page === pageNum ? activeRef : undefined}
               onClickAt={(x, y) => {
                 const idx = chunkAtPoint(chunks, pageNum, x, y)
@@ -72,6 +75,7 @@ function PdfPage({
   info,
   scale,
   highlights,
+  playing,
   activeRef,
   onClickAt,
 }: {
@@ -80,6 +84,7 @@ function PdfPage({
   info: PageInfo
   scale: number
   highlights: ChunkRect[]
+  playing: boolean
   activeRef?: React.MutableRefObject<HTMLDivElement | null>
   onClickAt: (x: number, y: number) => void
 }) {
@@ -128,7 +133,7 @@ function PdfPage({
         <div
           key={i}
           ref={i === 0 && activeRef ? activeRef : undefined}
-          className="pdf-highlight"
+          className={'pdf-highlight' + (playing ? ' playing' : '')}
           style={{
             left: r.x * scale - 2,
             top: r.y * scale - 2,

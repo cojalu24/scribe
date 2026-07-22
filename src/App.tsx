@@ -353,6 +353,7 @@ export default function App() {
             pages={paper.pages}
             chunks={paper.chunks}
             activeIndex={currentIndex}
+            playing={isPlaying}
             onSeek={(i) => readerRef.current?.seekTo(i)}
           />
         </main>
@@ -428,9 +429,6 @@ export default function App() {
 
         <div className="controls-spacer" />
 
-        <button className="btn ghost-btn" onClick={() => setPaper(null)}>
-          New paper
-        </button>
         <button
           className="btn"
           onClick={onSavePdf}
@@ -440,6 +438,9 @@ export default function App() {
         </button>
         <button className="btn" onClick={onExport} disabled={doneCaptures.length === 0}>
           {copied ? 'Copied' : `Copy notes${whisperLoading ? ' …' : ''}`}
+        </button>
+        <button className="btn exit-btn" onClick={() => setPaper(null)}>
+          Exit
         </button>
       </footer>
     </div>

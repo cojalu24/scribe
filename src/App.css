@@ -271,11 +271,16 @@
 .pdf-page canvas {
   display: block;
 }
+/* Neutral while paused; the yellow means "this is being read right now". */
 .pdf-highlight {
   position: absolute;
-  background: var(--highlight);
+  background: rgba(17, 17, 17, 0.09);
   border-radius: 2px;
   pointer-events: none;
+  transition: background 0.18s ease;
+}
+.pdf-highlight.playing {
+  background: var(--highlight);
 }
 
 /* ---------- Notes panel ---------- */
@@ -470,6 +475,18 @@
 
 .ghost-btn {
   color: var(--muted);
+}
+
+/* Leaving the paper — set apart on the right, muted red. */
+.exit-btn {
+  margin-left: 12px;
+  color: #b0574f;
+  border-color: #e8d2cf;
+}
+.exit-btn:hover:not(:disabled) {
+  color: #fff;
+  background: var(--recording);
+  border-color: var(--recording);
 }
 
 /* ---------- Mobile ---------- */
