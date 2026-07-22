@@ -35,6 +35,40 @@ async function load(progress: (p: number) => void) {
   })
 }
 
+// Safety net for Whisper's repetition loops: if a word or short phrase repeats
+// 3+ times back to back, keep two and drop the rest. Token-based (not regex) so
+// it stays fast even on a pathological 2,000-word output.
+function collapseRepeats(text: string): string {
+  const words = text.split(/\s+/).filter(Boolean)
+  const norm = (s: string) => s.toLowerCase().replace(/[.,!?;:"']/g, '')
+  const out: string[] = []
+  let i = 0
+  while (i < words.length) {
+    let collapsed = false
+    for (let n = 1; n <= 5 && !collapsed; n++) {
+      if (i + n * 2 > words.length) continue
+      const phrase = words.slice(i, i + n).map(norm).join(' ')
+      if (!phrase) continue
+      let reps = 1
+      let j = i + n
+      while (j + n <= words.length && words.slice(j, j + n).map(norm).join(' ') === phrase) {
+        reps++
+        j += n
+      }
+      if (reps >= 3) {
+        out.push(...words.slice(i, i + n * 2)) // keep two occurrences
+        i = j
+        collapsed = true
+      }
+    }
+    if (!collapsed) {
+      out.push(words[i])
+      i++
+    }
+  }
+  return out.join(' ')
+}
+
 self.onmessage = async (e: MessageEvent) => {
   const msg = e.data
   try {
@@ -45,13 +79,21 @@ self.onmessage = async (e: MessageEvent) => {
       self.postMessage({ type: 'loaded' })
     } else if (msg.type === 'transcribe') {
       if (!pipe) throw new Error('model not loaded')
+      // Whisper can fall into runaway repetition loops ("blah, blah, blah…"
+      // hundreds of times). Cap output length to what the audio could possibly
+      // contain and penalise repeats.
+      const seconds = msg.audio.length / 16000
       const out = await pipe(msg.audio, {
         language: 'en',
         task: 'transcribe',
         // Voice notes can run past 30s; chunk so nothing gets cut off.
         chunk_length_s: 30,
+        max_new_tokens: Math.min(440, Math.max(48, Math.ceil(seconds * 10))),
+        repetition_penalty: 1.15,
+        no_repeat_ngram_size: 8,
       })
-      self.postMessage({ type: 'text', id: msg.id, text: (out?.text || '').trim() })
+      const text = collapseRepeats((out?.text || '').trim())
+      self.postMessage({ type: 'text', id: msg.id, text })
     }
   } catch (err) {
     self.postMessage({ type: 'error', id: msg.id ?? null, error: String(err) })

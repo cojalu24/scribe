@@ -30,8 +30,13 @@ const MIME = {
   '.bin': 'application/octet-stream',
 }
 
+// A FIXED port matters: browser storage (where the AI models are cached) is
+// keyed by origin, including the port. A random port would make every launch a
+// fresh origin and re-download ~1.3GB of models every time.
+const PREFERRED_PORTS = [41599, 41600, 41601, 41602]
+
 function startServer() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const server = http.createServer((req, res) => {
       let urlPath = decodeURIComponent((req.url || '/').split('?')[0])
       if (urlPath === '/') urlPath = '/index.html'
@@ -63,7 +68,19 @@ function startServer() {
         send(data, path.extname(full))
       })
     })
-    server.listen(0, '127.0.0.1', () => resolve(server.address().port))
+    let attempt = 0
+    const tryListen = () => {
+      const port = PREFERRED_PORTS[attempt]
+      if (port === undefined) return reject(new Error('no free port for the local server'))
+      server.once('error', (err) => {
+        if (err && err.code === 'EADDRINUSE') {
+          attempt++
+          tryListen()
+        } else reject(err)
+      })
+      server.listen(port, '127.0.0.1', () => resolve(port))
+    }
+    tryListen()
   })
 }
 

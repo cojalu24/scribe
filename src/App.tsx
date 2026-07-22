@@ -75,9 +75,10 @@ export default function App() {
       setCurrentIndex(0)
       sessionStart.current = Date.now()
       readerRef.current?.setChunks(loaded.chunks)
-      // Warm up speech-to-text now, so the first capture doesn't have to wait
-      // on (or race) the model download.
-      transcriberRef.current?.loadModel().catch(() => {})
+      // Warm up speech-to-text so the first capture doesn't race the model
+      // download — but after a beat, so it doesn't compete for bandwidth if
+      // the user immediately hits Read aloud.
+      setTimeout(() => transcriberRef.current?.loadModel().catch(() => {}), 4000)
     } catch (e: any) {
       console.error('failed to load PDF', e)
       // Full details on-screen so failures are diagnosable (esp. Safari).
