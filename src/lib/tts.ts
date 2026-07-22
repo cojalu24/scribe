@@ -77,6 +77,20 @@ export class KokoroReader {
     return VOICES.map((v) => ({ id: v.id, label: v.label }))
   }
 
+  // Changing voice or speed invalidates everything already generated (the
+  // cache is keyed by voice only, and speed is baked into the audio).
+  setVoice(v: string) {
+    if (this.voice === v) return
+    this.voice = v
+    this.clearCache()
+  }
+
+  setSpeed(s: number) {
+    if (this.speed === s) return
+    this.speed = s
+    this.clearCache()
+  }
+
   // Idempotent: concurrent callers all await the same in-flight load, so
   // preloading at startup can't leave a later caller thinking it's ready.
   async loadModel(onProgress?: (pct: number) => void): Promise<void> {

@@ -391,6 +391,85 @@
   box-shadow: 0 0 0 3px var(--klein-soft);
 }
 
+/* ---------- Settings (gear, top right) ---------- */
+.settings {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 30;
+}
+.settings-gear {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.settings-gear:hover {
+  color: var(--foreground);
+  border-color: #e0e0e0;
+  background: var(--background);
+}
+.settings-panel {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 260px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--background);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+}
+.setting + .setting {
+  margin-top: 14px;
+}
+.setting label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.setting .voice-select {
+  width: 100%;
+  max-width: none;
+}
+.setting-note {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+.speed-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.speed-btn {
+  border: 1px solid #e0e0e0;
+  background: var(--background);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+}
+.speed-btn:hover {
+  border-color: var(--foreground);
+  color: var(--foreground);
+}
+.speed-btn.on {
+  background: var(--klein);
+  border-color: var(--klein);
+  color: #fff;
+}
+
 /* ---------- Controls footer ---------- */
 .controls {
   position: sticky;

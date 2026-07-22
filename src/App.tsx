@@ -26,6 +26,8 @@ export default function App() {
   const [modelPct, setModelPct] = useState(0)
   const [voice, setVoice] = useState('')
   const [voices, setVoices] = useState<{ id: string; label: string }[]>([])
+  const [speed, setSpeed] = useState(1.1)
+  const [showSettings, setShowSettings] = useState(false)
 
   const [captures, setCaptures] = useState<Capture[]>([])
   const [recording, setRecording] = useState(false)
@@ -57,7 +59,16 @@ export default function App() {
     // Warm both models as soon as the app opens, so pressing Read aloud or
     // Capture never waits on a load. Staggered so they don't fight for
     // bandwidth on the very first run (when they're downloading).
-    reader.loadModel((p) => setModelPct(Math.round(p))).catch(() => {})
+    reader
+      .loadModel((p) => setModelPct(Math.round(p)))
+      .then(() => {
+        // Populate the voice picker once the engine is up (this used to only
+        // happen on the first Read aloud press, which no longer runs).
+        setVoices(reader.listVoices())
+        setVoice(reader.voice)
+        setSpeed(reader.speed)
+      })
+      .catch(() => {})
     const warmStt = setTimeout(
       () => transcriberRef.current?.loadModel().catch(() => {}),
       1500,
@@ -135,7 +146,12 @@ export default function App() {
 
   const onVoiceChange = useCallback((v: string) => {
     setVoice(v)
-    if (readerRef.current) readerRef.current.voice = v
+    readerRef.current?.setVoice(v)
+  }, [])
+
+  const onSpeedChange = useCallback((s: number) => {
+    setSpeed(s)
+    readerRef.current?.setSpeed(s)
   }, [])
 
   // Voice capture: tapping starts recording (and pauses the reader so you can
@@ -314,6 +330,15 @@ export default function App() {
   if (!paper) {
     return (
       <>
+        <Settings
+          open={showSettings}
+          onToggle={setShowSettings}
+          voices={voices}
+          voice={voice}
+          onVoiceChange={onVoiceChange}
+          speed={speed}
+          onSpeedChange={onSpeedChange}
+        />
         <HomeScreen
           loading={loadingPdf}
           onFile={handleFile}
@@ -346,6 +371,15 @@ export default function App() {
 
   return (
     <div className="app">
+      <Settings
+        open={showSettings}
+        onToggle={setShowSettings}
+        voices={voices}
+        voice={voice}
+        onVoiceChange={onVoiceChange}
+        speed={speed}
+        onSpeedChange={onSpeedChange}
+      />
       <div className="columns">
         <main className="reader" aria-label="Paper">
           <PdfView
@@ -400,20 +434,6 @@ export default function App() {
               : 'Read aloud'}
           {readerState !== 'loading-model' && <kbd>space</kbd>}
         </button>
-        {voices.length > 0 && (
-          <select
-            className="btn voice-select"
-            value={voice}
-            onChange={(e) => onVoiceChange(e.target.value)}
-          >
-            {voices.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.label}
-              </option>
-            ))}
-          </select>
-        )}
-
         <button
           className={'btn capture' + (recording ? ' recording' : '')}
           onClick={toggleCapture}
@@ -511,6 +531,104 @@ function NoteText({
         </em>
       ) : (
         capture.transcript
+      )}
+    </div>
+  )
+}
+
+const SPEEDS = [0.8, 1, 1.1, 1.25, 1.5, 1.75, 2]
+
+// Gear in the top-right that opens voice + reading-speed settings. Available
+// on the home screen and while reading, so you can adjust mid-paper.
+function Settings({
+  open,
+  onToggle,
+  voices,
+  voice,
+  onVoiceChange,
+  speed,
+  onSpeedChange,
+}: {
+  open: boolean
+  onToggle: (open: boolean) => void
+  voices: { id: string; label: string }[]
+  voice: string
+  onVoiceChange: (v: string) => void
+  speed: number
+  onSpeedChange: (s: number) => void
+}) {
+  // Close on Escape or a click outside the panel.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onToggle(false)
+    const onDown = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('.settings')) onToggle(false)
+    }
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('mousedown', onDown)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('mousedown', onDown)
+    }
+  }, [open, onToggle])
+
+  return (
+    <div className="settings">
+      <button
+        className="settings-gear"
+        onClick={() => onToggle(!open)}
+        aria-label="Settings"
+        title="Settings"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5v.2a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1h.2a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"
+          />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="settings-panel">
+          <div className="setting">
+            <label htmlFor="voice-select">Voice</label>
+            {voices.length > 0 ? (
+              <select
+                id="voice-select"
+                className="btn voice-select"
+                value={voice}
+                onChange={(e) => onVoiceChange(e.target.value)}
+              >
+                {voices.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="setting-note">preparing…</span>
+            )}
+          </div>
+
+          <div className="setting">
+            <label>Reading speed</label>
+            <div className="speed-row">
+              {SPEEDS.map((s) => (
+                <button
+                  key={s}
+                  className={'speed-btn' + (Math.abs(speed - s) < 0.01 ? ' on' : '')}
+                  onClick={() => onSpeedChange(s)}
+                >
+                  {s}×
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
