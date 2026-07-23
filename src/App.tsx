@@ -99,6 +99,7 @@ export default function App() {
       setCurrentIndex(0)
       sessionStart.current = Date.now()
       readerRef.current?.setChunks(loaded.chunks)
+      if (readerRef.current) readerRef.current.title = loaded.meta.title || 'Scribe'
       // (Both models are already warming from app start.)
     } catch (e: any) {
       console.error('failed to load PDF', e)

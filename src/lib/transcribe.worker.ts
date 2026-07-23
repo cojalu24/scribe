@@ -15,7 +15,10 @@ async function load(progress: (p: number) => void) {
   const progress_callback = (p: any) => {
     if (p?.status === 'progress' && typeof p.progress === 'number') progress(p.progress)
   }
-  if ((self.navigator as any)?.gpu) {
+  // Phones get the small model: the 1GB turbo download and its memory
+  // footprint are unreasonable on a handset.
+  const isPhone = /iPhone|iPad|Android/i.test(self.navigator?.userAgent || '')
+  if ((self.navigator as any)?.gpu && !isPhone) {
     try {
       return await pipeline('automatic-speech-recognition', LARGE_MODEL, {
         device: 'webgpu',

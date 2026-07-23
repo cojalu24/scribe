@@ -19,8 +19,9 @@ const crossOriginIsolation = {
 }
 
 export default defineConfig({
-  // Served at the root of the bundled desktop app (its local server).
-  base: '/',
+  // Relative base so the same build works from the desktop app's local
+  // server ('/') AND GitHub Pages ('/scribe/').
+  base: './',
   plugins: [react(), crossOriginIsolation],
   // These packages ship prebuilt WASM/ONNX artifacts that shouldn't be
   // pre-bundled by Vite's dev optimizer.

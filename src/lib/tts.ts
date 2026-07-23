@@ -55,14 +55,42 @@ export class KokoroReader {
 
   onIndexChange?: (index: number) => void
   onStateChange?: (state: ReaderState) => void
+  // Shown on the phone's lock screen while reading.
+  title = 'Scribe'
 
   constructor() {
     this.audio.addEventListener('ended', () => this.handleEnded())
+    // Keep playing inside the page on iOS (no fullscreen video takeover),
+    // and keep the audio session alive for background/lock-screen playback.
+    ;(this.audio as HTMLAudioElement & { playsInline?: boolean }).playsInline = true
+    this.audio.setAttribute('playsinline', '')
+    this.wireMediaSession()
+  }
+
+  // Lock-screen / control-center transport controls (iPhone background play).
+  private wireMediaSession() {
+    if (!('mediaSession' in navigator)) return
+    const ms = navigator.mediaSession
+    ms.setActionHandler?.('play', () => this.play())
+    ms.setActionHandler?.('pause', () => this.pause())
+    ms.setActionHandler?.('previoustrack', () => this.seekTo(this.currentIndex - 1))
+    ms.setActionHandler?.('nexttrack', () => this.seekTo(this.currentIndex + 1))
+  }
+
+  private updateMediaSession() {
+    if (!('mediaSession' in navigator)) return
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: this.title,
+      artist: 'Scribe',
+    })
+    navigator.mediaSession.playbackState =
+      this.state === 'playing' || this.state === 'buffering' ? 'playing' : 'paused'
   }
 
   private setState(s: ReaderState) {
     this.state = s
     this.onStateChange?.(s)
+    this.updateMediaSession()
   }
 
   get index() {
