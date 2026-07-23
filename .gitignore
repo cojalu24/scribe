@@ -37,3 +37,7 @@ desktop/node_modules
 # Xcode
 ios/Scribe.xcodeproj/xcuserdata
 ios/*.xcodeproj/project.xcworkspace/xcuserdata
+# Kokoro model weights (fetch from HF: mweinbach/Kokoro-82M-Swift; see ios/README)
+ios/KokoroAssets
+ios/kokoro-weights
+ios/vendor-eval

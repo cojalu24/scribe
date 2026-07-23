@@ -14,14 +14,13 @@ struct ScribeApp: App {
                     store.openPaper(at: url)
                 }
                 .onAppear {
-                    #if DEBUG
-                    // Deterministic test path: SIMCTL_CHILD_SCRIBE_SAMPLE=1
-                    // makes the app open its bundled sample paper on launch.
+                    // Deterministic test path (any config): launching with
+                    // SIMCTL_CHILD_SCRIBE_SAMPLE=1 opens the bundled sample
+                    // paper. Only settable from a dev machine via simctl.
                     if ProcessInfo.processInfo.environment["SCRIBE_SAMPLE"] == "1",
                        let url = Bundle.main.url(forResource: "sample", withExtension: "pdf") {
                         store.openPaper(at: url)
                     }
-                    #endif
                 }
         }
     }

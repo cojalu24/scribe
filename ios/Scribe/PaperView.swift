@@ -23,7 +23,15 @@ struct PaperView: View {
             reader.load(chunks: paper.chunks)
         }
         .onDisappear {
-            reader.stop()
+            reader.stopPlayback()
+        }
+        .alert("Voice problem", isPresented: .init(
+            get: { reader.loadError != nil },
+            set: { if !$0 { reader.loadError = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(reader.loadError ?? "")
         }
     }
 
@@ -32,7 +40,7 @@ struct PaperView: View {
             Button {
                 reader.toggle()
             } label: {
-                Text(reader.isPlaying ? "Pause" : "Read aloud")
+                Text(reader.isBuffering ? "…" : reader.isPlaying ? "Pause" : "Read aloud")
                     .font(Theme.font(15, .medium))
                     .foregroundStyle(Theme.foreground)
                     .padding(.horizontal, 16)

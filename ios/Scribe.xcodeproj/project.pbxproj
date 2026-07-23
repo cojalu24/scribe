@@ -8,29 +8,46 @@
 
 /* Begin PBXBuildFile section */
 		15C99F69D3A09C3CA12919D5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56798E2408AEEAD6BC93495E /* HomeView.swift */; };
+		38BE5178929FF0CFC651D85F /* KokoroAssets in Resources */ = {isa = PBXBuildFile; fileRef = 7866F9538CA88C4F1B1B9734 /* KokoroAssets */; };
 		3B0718DF5BA0BE092CC454C9 /* PaperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E32B4744CE4EC2284B009 /* PaperView.swift */; };
 		4694FAEE88C5FA9302449667 /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCF99B4E952F2D6E073394B /* Reader.swift */; };
 		46E42F820BD44F627BC6EEA5 /* PdfContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623E7E585BF44B5626BDEC1D /* PdfContainerView.swift */; };
+		86F42818B9AE358434C62590 /* KokoroEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C52175C846443839ADF9568 /* KokoroEngine.swift */; };
 		9B070DB070FD61AF73D6886E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2263DEFF3E8D11C7E6E9E7EA /* Theme.swift */; };
 		A1B23FF8B1F6DB2A12658FE1 /* sample.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 984BBDBE800FBB495AD5988D /* sample.pdf */; };
 		A4A9DF9CD9C942A9725FD998 /* PaperModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F27C3A8401413757D737D1 /* PaperModel.swift */; };
+		B223389DD6B7D6F3AF1292C6 /* Kokoro in Frameworks */ = {isa = PBXBuildFile; productRef = E69D59027A86D0DCD183E4FF /* Kokoro */; };
 		C4457AFB46EBCC8F7A30D469 /* ScribeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572ACD849DC28AE0C35FCA9B /* ScribeApp.swift */; };
 		EBAC3A2D9BE8AE8A98EAC88F /* SpaceGrotesk-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 926E7E8B33BAEB511BC7E01B /* SpaceGrotesk-Variable.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C52175C846443839ADF9568 /* KokoroEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KokoroEngine.swift; sourceTree = "<group>"; };
 		11345C81116DC36BA7419B25 /* Scribe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Scribe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2263DEFF3E8D11C7E6E9E7EA /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		4B0DC90607B5651AD98E1A3B /* kokoro-swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "kokoro-swift"; path = "vendor/kokoro-swift"; sourceTree = SOURCE_ROOT; };
 		56798E2408AEEAD6BC93495E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		572ACD849DC28AE0C35FCA9B /* ScribeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribeApp.swift; sourceTree = "<group>"; };
 		623E7E585BF44B5626BDEC1D /* PdfContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PdfContainerView.swift; sourceTree = "<group>"; };
 		639E32B4744CE4EC2284B009 /* PaperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperView.swift; sourceTree = "<group>"; };
+		7866F9538CA88C4F1B1B9734 /* KokoroAssets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = KokoroAssets; sourceTree = SOURCE_ROOT; };
 		8BCF99B4E952F2D6E073394B /* Reader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reader.swift; sourceTree = "<group>"; };
 		926E7E8B33BAEB511BC7E01B /* SpaceGrotesk-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpaceGrotesk-Variable.ttf"; sourceTree = "<group>"; };
 		984BBDBE800FBB495AD5988D /* sample.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sample.pdf; sourceTree = "<group>"; };
 		B9C170F0EA4BE2F97F196EC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E2F27C3A8401413757D737D1 /* PaperModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		32C8E4CDC3056D38CC51E678 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B223389DD6B7D6F3AF1292C6 /* Kokoro in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		637CC253C48F5DA69FAD3A59 /* Products */ = {
@@ -50,6 +67,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		999D2C993C91058EBF95E246 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				4B0DC90607B5651AD98E1A3B /* kokoro-swift */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		9C166D790DDB4995E8179589 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -63,6 +88,7 @@
 			children = (
 				56798E2408AEEAD6BC93495E /* HomeView.swift */,
 				B9C170F0EA4BE2F97F196EC5 /* Info.plist */,
+				0C52175C846443839ADF9568 /* KokoroEngine.swift */,
 				E2F27C3A8401413757D737D1 /* PaperModel.swift */,
 				639E32B4744CE4EC2284B009 /* PaperView.swift */,
 				623E7E585BF44B5626BDEC1D /* PdfContainerView.swift */,
@@ -77,6 +103,8 @@
 		CF1A6569B97AB964E08BAAEC = {
 			isa = PBXGroup;
 			children = (
+				7866F9538CA88C4F1B1B9734 /* KokoroAssets */,
+				999D2C993C91058EBF95E246 /* Packages */,
 				CE0A276A257FD1674B6227E6 /* Scribe */,
 				637CC253C48F5DA69FAD3A59 /* Products */,
 			);
@@ -91,6 +119,7 @@
 			buildPhases = (
 				A3C55BD5E9BF3DB4B77D78FC /* Sources */,
 				CB65F06A27CFA292E58C59C8 /* Resources */,
+				32C8E4CDC3056D38CC51E678 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -98,6 +127,7 @@
 			);
 			name = Scribe;
 			packageProductDependencies = (
+				E69D59027A86D0DCD183E4FF /* Kokoro */,
 			);
 			productName = Scribe;
 			productReference = 11345C81116DC36BA7419B25 /* Scribe.app */;
@@ -123,6 +153,9 @@
 			);
 			mainGroup = CF1A6569B97AB964E08BAAEC;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DBFB2B5A0A5B27159884A978 /* XCLocalSwiftPackageReference "vendor/kokoro-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 637CC253C48F5DA69FAD3A59 /* Products */;
 			projectDirPath = "";
@@ -138,6 +171,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38BE5178929FF0CFC651D85F /* KokoroAssets in Resources */,
 				EBAC3A2D9BE8AE8A98EAC88F /* SpaceGrotesk-Variable.ttf in Resources */,
 				A1B23FF8B1F6DB2A12658FE1 /* sample.pdf in Resources */,
 			);
@@ -151,6 +185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15C99F69D3A09C3CA12919D5 /* HomeView.swift in Sources */,
+				86F42818B9AE358434C62590 /* KokoroEngine.swift in Sources */,
 				A4A9DF9CD9C942A9725FD998 /* PaperModel.swift in Sources */,
 				3B0718DF5BA0BE092CC454C9 /* PaperView.swift in Sources */,
 				46E42F820BD44F627BC6EEA5 /* PdfContainerView.swift in Sources */,
@@ -340,6 +375,20 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		DBFB2B5A0A5B27159884A978 /* XCLocalSwiftPackageReference "vendor/kokoro-swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "vendor/kokoro-swift";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E69D59027A86D0DCD183E4FF /* Kokoro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Kokoro;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0911AD40AB20891FC5ABBE8B /* Project object */;
 }

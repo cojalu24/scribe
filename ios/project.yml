@@ -3,12 +3,22 @@ options:
   bundleIdPrefix: com.colbylundak
   deploymentTarget:
     iOS: "17.0"
+packages:
+  Kokoro:
+    path: vendor/kokoro-swift
+
 targets:
   Scribe:
     type: application
     platform: iOS
     sources:
       - Scribe
+      - path: KokoroAssets
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: Kokoro
+        product: Kokoro
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.colbylundak.scribe
