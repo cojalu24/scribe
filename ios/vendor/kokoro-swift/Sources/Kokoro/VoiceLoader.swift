@@ -3,6 +3,9 @@ import MLX
 
 public final class VoiceLoader {
     private let baseDirectory: URL
+    // Exposed so the MLX-free CoreML voice adapter can read voice packs
+    // without touching MLX (whose Metal init crashes on the iOS simulator).
+    public var voiceDirectory: URL { baseDirectory }
     private var cache: [String: MLXArray] = [:]
     private let downloader: VoiceDownloader?
 
