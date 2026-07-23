@@ -576,14 +576,42 @@
   .notes {
     border-left: none;
     border-top: 1px solid var(--rule);
-    max-height: 38vh;
+    max-height: 34vh;
   }
+
+  /* Touch-first control bar: two tidy rows, big targets, no shortcut chips,
+     clear of the home indicator. */
   .controls {
     flex-wrap: wrap;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   }
   .controls-spacer {
     display: none;
+  }
+  .btn {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+  .btn kbd {
+    display: none;
+  }
+  .play {
+    flex-basis: 34%;
+  }
+  .exit-btn {
+    margin-left: 0;
+  }
+  .settings {
+    top: calc(10px + env(safe-area-inset-top));
+  }
+  .meeting-controls {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  .meeting-top {
+    padding-top: calc(10px + env(safe-area-inset-top));
   }
 }

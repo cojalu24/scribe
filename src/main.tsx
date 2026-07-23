@@ -16,4 +16,17 @@ if (import.meta.env.PROD && !isElectron && 'serviceWorker' in navigator) {
   // Ask the browser to protect our storage (the cached AI models) from
   // eviction — matters on iPhone.
   navigator.storage?.persist?.().catch(() => {})
+
+  // Phones use q8 weights; evict any fp32 leftovers from before that switch
+  // (a crashed first run could have cached hundreds of MB we'll never use).
+  if (/iPhone|iPad|Android/i.test(navigator.userAgent) && 'caches' in window) {
+    caches
+      .open('transformers-cache')
+      .then(async (cache) => {
+        for (const req of await cache.keys()) {
+          if (/fp32|fp16/.test(req.url)) cache.delete(req).catch(() => {})
+        }
+      })
+      .catch(() => {})
+  }
 }

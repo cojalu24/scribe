@@ -13,13 +13,17 @@ async function load(progress: (p: number) => void) {
   const progress_callback = (p: any) => {
     if (p?.status === 'progress' && typeof p.progress === 'number') progress(p.progress)
   }
+  // Phones get q8 weights even on WebGPU: fp32 (330MB download, far more
+  // resident) blows past mobile Safari's per-tab memory limit and the OS
+  // kills the page ("a problem repeatedly occurred").
+  const isPhone = /iPhone|iPad|Android/i.test(self.navigator?.userAgent || '')
   // Prefer WebGPU — generation is many times faster, which is what makes
   // tap-to-jump feel instant. Fall back to WASM (q8) where unavailable
   // (e.g. Safari 18, which doesn't expose the GPU to web apps).
   if ((self.navigator as any)?.gpu) {
     try {
       const t = await KokoroTTS.from_pretrained(MODEL_ID, {
-        dtype: 'fp32',
+        dtype: isPhone ? 'q8' : 'fp32',
         device: 'webgpu',
         progress_callback,
       })

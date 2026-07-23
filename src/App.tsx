@@ -69,13 +69,16 @@ export default function App() {
         setSpeed(reader.speed)
       })
       .catch(() => {})
-    const warmStt = setTimeout(
-      () => transcriberRef.current?.loadModel().catch(() => {}),
-      1500,
-    )
+    // On desktop, also pre-warm speech-to-text. On phones, holding BOTH
+    // models in memory is what got the page killed by iOS — there, Whisper
+    // loads lazily on the first capture instead.
+    const isPhone = /iPhone|iPad|Android/i.test(navigator.userAgent)
+    const warmStt = isPhone
+      ? null
+      : setTimeout(() => transcriberRef.current?.loadModel().catch(() => {}), 1500)
 
     return () => {
-      clearTimeout(warmStt)
+      if (warmStt) clearTimeout(warmStt)
       reader.dispose()
     }
   }, [])
