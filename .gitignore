@@ -31,7 +31,8 @@ desktop/dist
 desktop/build
 desktop/node_modules
 *.zip
-sample.pdf
+/public/sample.pdf
+!ios/Scribe/Resources/sample.pdf
 
 # Xcode
 ios/Scribe.xcodeproj/xcuserdata
